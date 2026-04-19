@@ -149,9 +149,8 @@ Suricata is deployed in IDS mode (detection only, no blocking) on the LAN interf
 
 ![Suricata — LAN categories selected (2/2)](screenshots/PF40.2-suricata-lan-categories.png)
 
-![Suricata — LAN IDS running](screenshots/PF41-suricata-lan-running.png)
+![Suricata — LAN IDS running](screenshots/PF41-suricata-interfaces-overview.png)
 
-![Suricata — final running status](screenshots/PF42-suricata-running-status.png)
 
 ---
 
@@ -281,8 +280,7 @@ All screenshots are located in the `/screenshots` directory.
 | PF39-suricata-etopen-rules-downloaded.png | Services > Suricata > Updates — ET Open MD5 hash populated, Result: success ✅ |
 | PF40.1-suricata-lan-categories.png | Services > Suricata > LAN Categories — Default rules + ET Open categories (top half) ✓ |
 | PF40.2-suricata-lan-categories.png | Services > Suricata > LAN Categories — ET Open categories selected: malware, scan, web_server (bottom half) ✓ |
-| PF41-suricata-lan-running.png | Services > Suricata > Interfaces — LAN (em1) added, status green ✅ |
-| PF42-suricata-running-status.png | Services > Suricata > Interfaces — LAN (em1) final running state, blocking mode disabled ✅ |
+| PF41-suricata-interfaces-overview.png | Services > Suricata > Interfaces — LAN (em1) running, pattern match: AUTO, blocking mode: DISABLED ✅ |
 
 ---
 
