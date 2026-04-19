@@ -173,13 +173,13 @@ All screenshots are located in the `/screenshots` directory.
 | PF25-cert-authority-edit-lab-ca.png | Certificate Authorities / Edit — Lab-CA creation form (RSA 2048, sha256, 3650 days, C=BE) |
 | PF26-cert-authority-lab-ca-listed.png | Certificate Authorities — Lab-CA listed, Internal ✓, valid until 15 Apr 2036 |
 | PF27-cert-edit-pfsense-webgui.png | Certificates / Add — pfSense-WebGUI creation form (RSA 2048, sha256, 397 days, signed by Lab-CA) |
-| PF29-cert-pfsense-webgui-listed.png | Certificates — pfSense-WebGUI listed, Issuer: Lab-CA, valid until 20 May 2027 |
+| PF28-cert-pfsense-webgui-listed.png | Certificates — pfSense-WebGUI listed, Issuer: Lab-CA, valid until 20 May 2027 |
 
 ### Hardening — Admin Access & Services
 
 | File | Content |
 |---|---|
-| PF28-system-advanced-port-8443-before-cert.png | System > Advanced > Admin Access — HTTPS, cert: GUI default, port: 8443 (before cert swap) |
+| PF29-system-advanced-port-8443-before-cert.png | System > Advanced > Admin Access — HTTPS, cert: GUI default, port: 8443 (before cert swap) |
 | PF30-system-advanced-port-8443-cert-webgui.png | System > Advanced > Admin Access — HTTPS, cert: **pfSense-WebGUI**, port: **8443** (final state) |
 | PF31-services-upnp-disabled.png | Services > UPnP & NAT-PMP — Enable UPnP unchecked (**disabled**) |
 | PF32-system-advanced-ssh-disabled.png | System > Advanced > Admin Access — Secure Shell Server unchecked (**SSH disabled**) |
