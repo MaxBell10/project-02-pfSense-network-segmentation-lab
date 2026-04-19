@@ -1,4 +1,4 @@
-![Logo](homelab_logo_maxime_belliard_p02.svg)
+![Logo](homelab_logo_maxime_belliard.svg)
 
 # 🔥 pfSense Network Segmentation Lab
 
@@ -148,45 +148,55 @@ All screenshots are located in the `/screenshots` directory.
 | PF10-wizard-completed-step4.png | Setup Wizard — Wizard completed (Step 9/9) |
 | PF11-dashboard-wan-lan-dmz-up.png | Dashboard — WAN/LAN/DMZ up, pfSense CE 2.7.2, CPU i7-14700HX |
 | PF12-winsrv-ipconfig-lan-192-168-1-100.png | Windows Server 2022 — `ipconfig` showing IP 192.168.1.100 / gateway 192.168.1.1 |
+| PF13-interface-dmz-config.png | Interfaces > OPT1 (DMZ) — Static IPv4 / 192.168.2.1/24 / interface enabled ✓ |
 
 ### Firewall Rules — Step-by-Step
 
 | File | Content |
 |---|---|
-| PF13-firewall-rules-lan-default-rules.png | Firewall / Rules / LAN — default rules present (before hardening) |
-| PF14-firewall-rules-lan-default-rules-deleted.png | Firewall / Rules / LAN — default rules deleted (before custom rules) |
-| PF15-firewall-rule-edit-lan-to-wan.png | Edit rule — LAN to WAN: Pass / IPv4 TCP / LAN subnets → Any / port 80–443 |
-| PF16-firewall-rule-edit-lan-to-dmz.png | Edit rule — LAN to DMZ: Pass / IPv4 TCP / LAN subnets → DMZ address / port 80–443 |
-| PF17-firewall-rules-lan-final.png | Firewall / Rules / LAN — final state: 2 custom rules (LAN→WAN, LAN→DMZ) |
-| PF18-firewall-rule-edit-dmz-to-lan-block.png | Edit rule — DMZ to LAN: **Block** / IPv4 Any / DMZ address → LAN subnets |
-| PF19-firewall-rules-dmz-block-all.png | Firewall / Rules / DMZ — final state: 1 block rule (DMZ→LAN BLOCK ALL ❌) |
+| PF14-firewall-rules-lan-default-rules.png | Firewall / Rules / LAN — default rules present (before hardening) |
+| PF15-firewall-rules-lan-default-rules-deleted.png | Firewall / Rules / LAN — default rules deleted (before custom rules) |
+| PF16-firewall-rule-edit-lan-to-wan.png | Edit rule — LAN to WAN: Pass / IPv4 TCP / LAN subnets → Any / port 80–443 |
+| PF17-firewall-rule-edit-lan-to-dmz.png | Edit rule — LAN to DMZ: Pass / IPv4 TCP / LAN subnets → DMZ address / port 80–443 |
+| PF18-firewall-rules-lan-final.png | Firewall / Rules / LAN — final state: 2 custom rules (LAN→WAN, LAN→DMZ) |
+| PF19-firewall-rule-edit-dmz-to-lan-block.png | Edit rule — DMZ to LAN: **Block** / IPv4 Any / DMZ address → LAN subnets |
 | PF20-firewall-rule-edit-wan-to-dmz-https.png | Edit rule — WAN to DMZ: Pass / IPv4 TCP / Any → DMZ subnets / port 443 |
-| PF21-firewall-rules-wan-https-only.png | Firewall / Rules / WAN — final state: 1 rule (WAN→DMZ HTTPS only) |
+| PF21-firewall-rules-dmz-block-all.png | Firewall / Rules / DMZ — final state: 1 block rule (DMZ→LAN BLOCK ALL ❌) |
+| PF22-firewall-rules-wan-https-only.png | Firewall / Rules / WAN — final state: 1 rule (WAN→DMZ HTTPS only) |
+| PF23-firewall-rules-wan-applied.png | Firewall / Rules / WAN — changes applied successfully ✅ |
+| PF24-firewall-rules-dmz-applied.png | Firewall / Rules / DMZ — changes applied successfully ✅ |
 
 ### Hardening — Internal PKI
 
 | File | Content |
 |---|---|
-| PF22-cert-authority-edit-lab-ca.png | Certificate Authorities / Edit — Lab-CA creation form (RSA 2048, sha256, 3650 days, C=BE) |
-| PF23-cert-authority-lab-ca-listed.png | Certificate Authorities — Lab-CA listed, Internal ✓, valid until 15 Apr 2036 |
-| PF24-cert-edit-pfsense-webgui.png | Certificates / Add — pfSense-WebGUI creation form (RSA 2048, sha256, 397 days, signed by Lab-CA) |
-| PF26-cert-pfsense-webgui-listed.png | Certificates — pfSense-WebGUI listed, Issuer: Lab-CA, valid until 20 May 2027 |
+| PF25-cert-authority-edit-lab-ca.png | Certificate Authorities / Edit — Lab-CA creation form (RSA 2048, sha256, 3650 days, C=BE) |
+| PF26-cert-authority-lab-ca-listed.png | Certificate Authorities — Lab-CA listed, Internal ✓, valid until 15 Apr 2036 |
+| PF27-cert-edit-pfsense-webgui.png | Certificates / Add — pfSense-WebGUI creation form (RSA 2048, sha256, 397 days, signed by Lab-CA) |
+| PF29-cert-pfsense-webgui-listed.png | Certificates — pfSense-WebGUI listed, Issuer: Lab-CA, valid until 20 May 2027 |
 
 ### Hardening — Admin Access & Services
 
 | File | Content |
 |---|---|
-| PF25-system-advanced-port-8443-before-cert.png | System > Advanced > Admin Access — HTTPS, cert: GUI default, port: 8443 (before cert swap) |
-| PF27-system-advanced-port-8443-cert-webgui.png | System > Advanced > Admin Access — HTTPS, cert: **pfSense-WebGUI**, port: **8443** (final state) |
-| PF28-services-upnp-disabled.png | Services > UPnP & NAT-PMP — Enable UPnP unchecked (**disabled**) |
-| PF29-system-advanced-ssh-disabled.png | System > Advanced > Admin Access — Secure Shell Server unchecked (**SSH disabled**) |
+| PF28-system-advanced-port-8443-before-cert.png | System > Advanced > Admin Access — HTTPS, cert: GUI default, port: 8443 (before cert swap) |
+| PF30-system-advanced-port-8443-cert-webgui.png | System > Advanced > Admin Access — HTTPS, cert: **pfSense-WebGUI**, port: **8443** (final state) |
+| PF31-services-upnp-disabled.png | Services > UPnP & NAT-PMP — Enable UPnP unchecked (**disabled**) |
+| PF32-system-advanced-ssh-disabled.png | System > Advanced > Admin Access — Secure Shell Server unchecked (**SSH disabled**) |
 
 ### Configuration Backup
 
 | File | Content |
 |---|---|
-| PF30-diagnostics-backup-restore.png | Diagnostics > Backup & Restore — XML export (accessed via port 8443) |
-| PF31-config-xml-exported.png | Windows Explorer — `config-pfSense.home.arpa-*.xml` exported (23 KB) |
+| PF33-diagnostics-backup-restore.png | Diagnostics > Backup & Restore — XML export (accessed via port 8443) |
+| PF34-config-xml-exported.png | Windows Explorer — `config-pfSense.home.arpa-*.xml` exported (23 KB) |
+
+### Validation — DHCP & Firewall Logs
+
+| File | Content |
+|---|---|
+| PF35-dhcp-leases.png | Status > DHCP Leases — Windows Server (192.168.1.100) active lease confirmed ✅ |
+| PF36-firewall-logs.png | Status > System Logs > Firewall — active block entries, default deny rule IPv4 ❌ |
 
 ---
 
