@@ -1,4 +1,4 @@
-![Logo](homelab_logo_maxime_belliard.svg)
+![Logo](homelab_logo_maxime_belliard_p02.svg)
 
 # 🔥 pfSense Network Segmentation Lab
 
