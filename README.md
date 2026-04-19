@@ -55,6 +55,10 @@ It reflects the intersection of network engineering and security governance — 
 | LAN | em1 | Internal Network `lan-network` | 192.168.1.0/24 |
 | DMZ | em2 | Internal Network `dmz-network` | 192.168.2.0/24 |
 
+![pfSense console — WAN/LAN/DMZ interfaces up](screenshots/PF05-console-interfaces-wan-lan-dmz.png)
+
+![pfSense dashboard — all interfaces up](screenshots/PF11-dashboard-wan-lan-dmz-up.png)
+
 ### DHCP Ranges
 
 | Zone | Range |
@@ -78,6 +82,12 @@ It reflects the intersection of network engineering and security governance — 
 
 > **Design principle:** Default-deny between all zones. Only explicitly permitted traffic flows are allowed. The DMZ → LAN block rule is the critical isolation control — a compromised DMZ host cannot reach internal resources.
 
+![LAN rules — final state](screenshots/PF18-firewall-rules-lan-final.png)
+
+![DMZ — BLOCK ALL rule](screenshots/PF21-firewall-rules-dmz-block-all.png)
+
+![WAN — HTTPS only rule](screenshots/PF22-firewall-rules-wan-https-only.png)
+
 ### pfSense Hardening
 
 | Control | Configuration | Justification |
@@ -88,12 +98,18 @@ It reflects the intersection of network engineering and security governance — 
 | SSH | **Disabled** | Reduces attack surface; management via WebGUI only |
 | NAT reflection | **Disabled** | Prevents hairpin NAT abuse |
 
+![Admin Access — port 8443 + pfSense-WebGUI cert assigned](screenshots/PF30-system-advanced-port-8443-cert-webgui.png)
+
 ### Internal PKI
 
 | Asset | Details |
 |---|---|
 | CA | `Lab-CA` — RSA 2048, SHA-256, 10-year validity (3650 days), `ST=Belgium, O=Lab, L=Brussels, CN=lab-ca, C=BE` |
 | Certificate | `pfSense-WebGUI` — RSA 2048, SHA-256, 397 days, `ST=Belgium, O=Lab, L=Brussels, CN=192.168.1.1, C=BE`, signed by `Lab-CA` |
+
+![Lab-CA — internal CA listed](screenshots/PF26-cert-authority-lab-ca-listed.png)
+
+![pfSense-WebGUI — certificate listed, signed by Lab-CA](screenshots/PF28-cert-pfsense-webgui-listed.png)
 
 ---
 
@@ -120,6 +136,22 @@ scp admin@192.168.1.1:/tmp/traffic.pcap ./
 ```
 
 Annotated Wireshark captures are available in the `/pcaps` directory. Each capture confirms that cross-zone traffic matches the firewall rule matrix above.
+
+---
+
+## ✅ Validation
+
+### DHCP Lease — LAN connectivity confirmed
+
+![DHCP Leases — Windows Server 192.168.1.100 active](screenshots/PF35-dhcp-leases.png)
+
+The Windows Server (192.168.1.100) received a DHCP lease from pfSense, confirming end-to-end LAN connectivity through the firewall.
+
+### Firewall Logs — Active blocking confirmed
+
+![Firewall Logs — default deny rule active](screenshots/PF36-firewall-logs.png)
+
+pfSense is actively logging and blocking traffic that does not match any permit rule, confirming that the default-deny policy is enforced in real time.
 
 ---
 
