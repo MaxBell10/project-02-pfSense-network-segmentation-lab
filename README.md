@@ -2,7 +2,7 @@
 
 # 🔥 pfSense Network Segmentation Lab
 
-> Home lab implementing network segmentation with pfSense CE, firewall rules, and hardening — built as a portfolio project for GRC + Technical security roles in Belgium.
+> Home lab implementing network segmentation with pfSense CE, firewall rules, Suricata IDS, and hardening — built as a portfolio project for GRC + Technical security roles in Belgium.
 
 ---
 
@@ -19,6 +19,7 @@ This lab simulates real-world network security challenges faced by network engin
 - Segmenting a corporate network into isolated security zones
 - Enforcing least-privilege traffic flows between zones using explicit firewall rules
 - Hardening the firewall appliance itself (TLS, port change, disabled services)
+- Detecting suspicious traffic with Suricata IDS on the LAN interface
 - Capturing and analysing inter-zone traffic with tcpdump and Wireshark
 - Mapping the architecture to NIS2 and ISO 27001 controls
 
@@ -98,7 +99,7 @@ It reflects the intersection of network engineering and security governance — 
 | SSH | **Disabled** | Reduces attack surface; management via WebGUI only |
 | NAT reflection | **Disabled** | Prevents hairpin NAT abuse |
 
-![Admin Access — port 8443 + pfSense-WebGUI cert assigned](screenshots/PF30-system-advanced-port-8443-cert-webgui.png)
+![Admin Access — port 8443 + pfSense-WebGUI cert assigned](screenshots/PF29-system-advanced-port-8443-cert-webgui.png)
 
 ### Internal PKI
 
@@ -110,6 +111,47 @@ It reflects the intersection of network engineering and security governance — 
 ![Lab-CA — internal CA listed](screenshots/PF26-cert-authority-lab-ca-listed.png)
 
 ![pfSense-WebGUI — certificate listed, signed by Lab-CA](screenshots/PF28-cert-pfsense-webgui-listed.png)
+
+### Suricata IDS
+
+Suricata is deployed in IDS mode (detection only, no blocking) on the LAN interface (em1), monitoring all inbound and outbound traffic from the internal network.
+
+| Setting | Value |
+|---|---|
+| Interface | LAN (em1) |
+| Mode | IDS (blocking disabled) |
+| Ruleset | Emerging Threats Open (ET Open) |
+| Update interval | 1 day |
+| Alert logging | Enabled → system log |
+
+**ET Open rule categories enabled:**
+
+- `emerging-attack_response.rules` — C2 callback and attack response detection
+- `emerging-botcc.rules` — Known botnet command and control servers
+- `emerging-compromised.rules` — Known compromised hosts
+- `emerging-dns.rules` — DNS anomaly detection
+- `emerging-dos.rules` — Denial of service patterns
+- `emerging-malware.rules` — Malware traffic signatures
+- `emerging-scan.rules` — Port and vulnerability scanning
+- `emerging-web_server.rules` — Web server attack patterns
+
+> **Design note:** ET Open `emerging-trojan.rules` no longer exists as a separate category — trojan signatures are included in `emerging-malware.rules` in current ET Open releases.
+
+![Suricata — package installed](screenshots/PF36-suricata-package-installed.png)
+
+![Suricata — LAN interface configured](screenshots/PF37-suricata-lan-interface-config.png)
+
+![Suricata — Global Settings, ET Open enabled](screenshots/PF38-suricata-global-settings-etopen.png)
+
+![Suricata — ET Open rules downloaded](screenshots/PF39-suricata-etopen-rules-downloaded.png)
+
+![Suricata — LAN categories selected (1/2)](screenshots/PF40.1-suricata-lan-categories.png)
+
+![Suricata — LAN categories selected (2/2)](screenshots/PF40.2-suricata-lan-categories.png)
+
+![Suricata — LAN IDS running](screenshots/PF41-suricata-lan-running.png)
+
+![Suricata — final running status](screenshots/PF42-suricata-running-status.png)
 
 ---
 
@@ -143,13 +185,13 @@ Annotated Wireshark captures are available in the `/pcaps` directory. Each captu
 
 ### DHCP Lease — LAN connectivity confirmed
 
-![DHCP Leases — Windows Server 192.168.1.100 active](screenshots/PF35-dhcp-leases.png)
+![DHCP Leases — Windows Server 192.168.1.100 active](screenshots/PF34-dhcp-leases.png)
 
 The Windows Server (192.168.1.100) received a DHCP lease from pfSense, confirming end-to-end LAN connectivity through the firewall.
 
 ### Firewall Logs — Active blocking confirmed
 
-![Firewall Logs — default deny rule active](screenshots/PF36-firewall-logs.png)
+![Firewall Logs — default deny rule active](screenshots/PF35-firewall-logs.png)
 
 pfSense is actively logging and blocking traffic that does not match any permit rule, confirming that the default-deny policy is enforced in real time.
 
@@ -211,24 +253,36 @@ All screenshots are located in the `/screenshots` directory.
 
 | File | Content |
 |---|---|
-| PF29-system-advanced-port-8443-before-cert.png | System > Advanced > Admin Access — HTTPS, cert: GUI default, port: 8443 (before cert swap) |
-| PF30-system-advanced-port-8443-cert-webgui.png | System > Advanced > Admin Access — HTTPS, cert: **pfSense-WebGUI**, port: **8443** (final state) |
-| PF31-services-upnp-disabled.png | Services > UPnP & NAT-PMP — Enable UPnP unchecked (**disabled**) |
-| PF32-system-advanced-ssh-disabled.png | System > Advanced > Admin Access — Secure Shell Server unchecked (**SSH disabled**) |
+| PF29-system-advanced-port-8443-cert-webgui.png | System > Advanced > Admin Access — HTTPS, cert: **pfSense-WebGUI**, port: **8443** (final state) |
+| PF30-services-upnp-disabled.png | Services > UPnP & NAT-PMP — Enable UPnP unchecked (**disabled**) |
+| PF31-system-advanced-ssh-disabled.png | System > Advanced > Admin Access — Secure Shell Server unchecked (**SSH disabled**) |
 
 ### Configuration Backup
 
 | File | Content |
 |---|---|
-| PF33-diagnostics-backup-restore.png | Diagnostics > Backup & Restore — XML export (accessed via port 8443) |
-| PF34-config-xml-exported.png | Windows Explorer — `config-pfSense.home.arpa-*.xml` exported (23 KB) |
+| PF32-diagnostics-backup-restore.png | Diagnostics > Backup & Restore — XML export (accessed via port 8443) |
+| PF33-config-xml-exported.png | Windows Explorer — `config-pfSense.home.arpa-*.xml` exported (23 KB) |
 
 ### Validation — DHCP & Firewall Logs
 
 | File | Content |
 |---|---|
-| PF35-dhcp-leases.png | Status > DHCP Leases — Windows Server (192.168.1.100) active lease confirmed ✅ |
-| PF36-firewall-logs.png | Status > System Logs > Firewall — active block entries, default deny rule IPv4 ❌ |
+| PF34-dhcp-leases.png | Status > DHCP Leases — Windows Server (192.168.1.100) active lease confirmed ✅ |
+| PF35-firewall-logs.png | Status > System Logs > Firewall — active block entries, default deny rule IPv4 ❌ |
+
+### Suricata IDS
+
+| File | Content |
+|---|---|
+| PF36-suricata-package-installed.png | System > Package Manager — pfSense-pkg-suricata installation successful ✅ |
+| PF37-suricata-lan-interface-config.png | Services > Suricata > LAN Interface Settings — LAN (em1), IDS mode, alerts to syslog ✓ |
+| PF38-suricata-global-settings-etopen.png | Services > Suricata > Global Settings — ET Open enabled, update interval 1 day ✓ |
+| PF39-suricata-etopen-rules-downloaded.png | Services > Suricata > Updates — ET Open MD5 hash populated, Result: success ✅ |
+| PF40.1-suricata-lan-categories.png | Services > Suricata > LAN Categories — Default rules + ET Open categories (top half) ✓ |
+| PF40.2-suricata-lan-categories.png | Services > Suricata > LAN Categories — ET Open categories selected: malware, scan, web_server (bottom half) ✓ |
+| PF41-suricata-lan-running.png | Services > Suricata > Interfaces — LAN (em1) added, status green ✅ |
+| PF42-suricata-running-status.png | Services > Suricata > Interfaces — LAN (em1) final running state, blocking mode disabled ✅ |
 
 ---
 
@@ -238,6 +292,7 @@ All screenshots are located in the `/screenshots` directory.
 |---|---|
 | Network architecture & segmentation | 3-zone design (WAN/LAN/DMZ) with isolated subnets |
 | Firewall rule design | Explicit least-privilege rules per zone pair, default-deny |
+| Intrusion detection | Suricata IDS on LAN interface, ET Open ruleset, alert logging |
 | Internal PKI | CA creation, certificate issuance and assignment |
 | Firewall hardening | Port change, TLS, UPnP/SSH disabled |
 | Traffic analysis | tcpdump captures, Wireshark annotation, rule validation |
@@ -250,6 +305,7 @@ All screenshots are located in the `/screenshots` directory.
 
 | Framework | Control |
 |---|---|
+| ISO 27001:2022 | A.8.16 Monitoring activities — Suricata IDS alert logging on LAN |
 | ISO 27001:2022 | A.8.20 Network security — network segmentation and access control |
 | ISO 27001:2022 | A.8.21 Security of network services — secure configuration of network components |
 | ISO 27001:2022 | A.8.22 Segregation of networks — DMZ isolation from internal LAN |
@@ -268,6 +324,7 @@ Key takeaways:
 - WebGUI port change (443 → 8443) requires updating the VirtualBox NAT port forwarding rule if accessing from the host; the session silently drops otherwise
 - `tcpdump` on pfSense requires specifying the correct interface (`-i em1` for LAN, `-i em2` for DMZ) — capturing on `any` mixes all zone traffic and makes analysis harder
 - In a production environment, the internal CA would be managed by a dedicated PKI service (e.g. Windows ADCS or HashiCorp Vault), not self-generated on the firewall
+- Suricata alert generation could not be validated in VirtualBox — virtual NICs (em0/em1/em2) do not support hardware offloading disable, preventing Suricata from inspecting packets inline. In a production environment with physical NICs or a Type-1 hypervisor (ESXi, Proxmox), this limitation does not apply
 
 ---
 
@@ -291,6 +348,7 @@ This lab is part of a structured portfolio series demonstrating progressive cybe
 
 - **VirtualBox** — Hypervisor
 - **pfSense CE 2.7.2** — Open source firewall / router
+- **Suricata** — IDS engine on LAN interface (ET Open ruleset)
 - **Windows Server 2022** — Domain Controller on LAN segment (180-day eval)
 - **Windows 10 Pro** — Client workstation on LAN segment
 - **tcpdump** — Packet capture on pfSense interfaces
